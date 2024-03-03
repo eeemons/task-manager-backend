@@ -3,29 +3,33 @@ const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 async function signUpController(req, res) {
-  try {
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email: req?.body?.email,
-      },
-    });
-    if (!existingUser) {
-      const hashedPassword = await bcrypt.hash(req?.body?.password, 10);
-      const user = await prisma.user.create({
-        data: {
-          name: req?.body?.name,
+  if (req.email && req.password) {
+    try {
+      const existingUser = await prisma.user.findUnique({
+        where: {
           email: req?.body?.email,
-          password: hashedPassword,
         },
       });
-      res.send(user);
-    } else {
-      res.status(400).send("User already exists");
+      if (!existingUser) {
+        const hashedPassword = await bcrypt.hash(req?.body?.password, 10);
+        const user = await prisma.user.create({
+          data: {
+            name: req?.body?.name,
+            email: req?.body?.email,
+            password: hashedPassword,
+          },
+        });
+        res.send(user);
+      } else {
+        res.status(400).send("User already exists");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      await prisma.$disconnect();
     }
-  } catch (err) {
-    console.log(err);
-  } finally {
-    await prisma.$disconnect();
+  } else {
+    res.status(400).send("Require email & password");
   }
 }
 

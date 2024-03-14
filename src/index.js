@@ -2,6 +2,13 @@ const express = require("express");
 const { verifyToken } = require("../middlewears/authorizations");
 const app = express();
 const port = 3000;
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "http://localhost:5000",
+  })
+);
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -20,5 +27,6 @@ app.listen(port, () => {
 });
 const userRouter = require("../routes/users");
 app.use("/users", userRouter);
+
 const taskRouter = require("../routes/tasks");
 app.use("/tasks", verifyToken, taskRouter);

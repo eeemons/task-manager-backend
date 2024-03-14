@@ -5,7 +5,7 @@ async function postTasks(req, res) {
     const task = await prisma.task.create({
       data: {
         title: req.body.title,
-        completed: req.body.completed,
+        completed: req.body.completed === "true" ? true : false,
         userId: req.body.userId,
         description: req.body.description,
       },

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 async function signUpController(req, res) {
-  if (req.email && req.password) {
+  if (req.body.email && req.body.password) {
     try {
       const existingUser = await prisma.user.findUnique({
         where: {
